@@ -39,75 +39,83 @@ public class Player : MonoBehaviour
 
     void Start(){
         initPosition = transform.position;
+
+        StartCoroutine(Move());
     }
 
-    void Update(){
-        //Si no se ha presionado la tecla, no se está jugando y presiona una tecla
-        if(!keyDown && !GameManager.instance.isPlaying && Input.GetAxisRaw("Horizontal") != 0 && GameManager.instance.currentCollectable){
-            //Y hacemos keyDown a true para que deje de comprobar por si se mantiene
-            //las teclas presionadas
-            keyDown = true;
+    IEnumerator Move(){
+        while(true){
+            //Si no se ha presionado la tecla, no se está jugando y presiona una tecla
+            if(!keyDown && !GameManager.instance.isPlaying && Input.GetAxisRaw("Horizontal") != 0 && GameManager.instance.currentCollectable){
+                //Y hacemos keyDown a true para que deje de comprobar por si se mantiene
+                //las teclas presionadas
+                keyDown = true;
 
-            //Entonces juega el jugador
-            Play();
-        }
-
-        //Si la ia no ha muerto entonces que se le quede mirando de frente
-        if(GameManager.instance.ia){
-            transform.LookAt(GameManager.instance.ia.position);
-        }
-
-        //Hasta que suelte las teclas
-        if(Input.GetAxisRaw("Horizontal") == 0){
-            //Se hace keyDown a false (queriendo decir que ya soltó las teclas y está listo para
-            //comprobar ahora si, si el jugador logra reaccionar antes que la ia)
-            keyDown = false;
-        }
-
-        //Si se está jugando se movera el jugador si presionó una tecla
-        if(GameManager.instance.isPlaying && inputDirection != 0){
-            float initDistance = 0f;
-
-            if(fail){
-                initDistance = Vector3.Distance(new Vector3(
-                    -GameManager.instance.currentCollectable.position.x,
-                    GameManager.instance.currentCollectable.position.y,
-                    GameManager.instance.currentCollectable.position.z
-                ), transform.position);
-
-                if(initDistance <= 0.01f){
-                    inputDirection = -inputDirection;
-                    upCollectable = true;
-                    fail = false;
-                }
+                //Entonces juega el jugador
+                Play();
             }
-            
-            else if(!upCollectable && GameManager.instance.currentCollectable){
-                initDistance = Vector3.Distance(GameManager.instance.currentCollectable.position, transform.position);
+
+            //Si la ia no ha muerto entonces que se le quede mirando de frente
+            if(GameManager.instance.ia){
+                transform.LookAt(GameManager.instance.ia.position);
+            }
+
+            //Hasta que suelte las teclas
+            if(Input.GetAxisRaw("Horizontal") == 0){
+                //Se hace keyDown a false (queriendo decir que ya soltó las teclas y está listo para
+                //comprobar ahora si, si el jugador logra reaccionar antes que la ia)
+                keyDown = false;
+            }
+
+            //Si se está jugando se movera el jugador si presionó una tecla
+            if(GameManager.instance.isPlaying && inputDirection != 0){
+                float initDistance = 0f;
+
+                if(fail){
+                    initDistance = Vector3.Distance(new Vector3(
+                        -GameManager.instance.currentCollectable.position.x,
+                        GameManager.instance.currentCollectable.position.y,
+                        GameManager.instance.currentCollectable.position.z
+                    ), transform.position);
+
+                    if(initDistance <= 0.01f){
+                        inputDirection = -inputDirection;
+                        upCollectable = true;
+                        fail = false;
+                    }
+                }
                 
-                if(initDistance <= 0.01f){
-                    inputDirection = -inputDirection;
-                    upCollectable = true;
-                    //Ataca al jugador
-                    Attack();
+                else if(!upCollectable && GameManager.instance.currentCollectable){
+                    initDistance = Vector3.Distance(GameManager.instance.currentCollectable.position, transform.position);
                     
-                    //Destruye el collectable
-                    Destroy(GameManager.instance.currentCollectable.gameObject);
+                    if(initDistance <= 0.01f){
+                        inputDirection = -inputDirection;
+                        upCollectable = true;
+                        //Ataca al jugador
+                        Attack();
+                        
+                        //Destruye el collectable
+                        Destroy(GameManager.instance.currentCollectable.gameObject);
+
+                        yield return new WaitForSeconds(1f);
+                    }
+                }
+
+                else{
+                    initDistance = Vector3.Distance(initPosition, transform.position);
+                }
+
+                transform.RotateAround(Vector3.zero, Vector3.up, -inputDirection * speed * initDistance * Time.deltaTime);
+
+                if(initDistance <= 0.001f && upCollectable){
+                    upCollectable = false;
+                    transform.position = initPosition;
+                    GameManager.instance.isPlaying = false;
+                    inputDirection = 0;
                 }
             }
 
-            else{
-                initDistance = Vector3.Distance(initPosition, transform.position);
-            }
-
-            transform.RotateAround(Vector3.zero, Vector3.up, -inputDirection * speed * initDistance * Time.deltaTime);
-
-            if(initDistance <= 0.001f && upCollectable){
-                upCollectable = false;
-                transform.position = initPosition;
-                GameManager.instance.isPlaying = false;
-                inputDirection = 0;
-            }
+            yield return null;
         }
     }
 
