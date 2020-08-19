@@ -48,19 +48,25 @@ public class GameManager : MonoBehaviour
         ia = GameObject.Find("IA 1").transform;
 
         while(true){
-            if(!isPlaying && !currentCollectable && player && ia){
+            //Si no se juega y no hay un collectable creado y existen player e ia
+            //entonces crea un collectable
+            if(!isPlaying && !currentCollectable && player && !player.GetComponent<Player>().isDead && ia && !ia.GetComponent<IA>().isDead){
                 yield return new WaitForSeconds(0.1f);
                 InstantiateCollectable();
             }
 
+            //gana ia
             if(!player){
                 Debug.Log("Gana ia");
                 StopAllCoroutines();
             }
 
-            else if(!ia){
-                Debug.Log("Gana player");
-                StopAllCoroutines();
+            //gana jugador
+            else if(ia && ia.GetComponent<IA>().isDead){
+                if(iaCount >= ias.Length){
+                    Debug.Log("Gana player");
+                    StopAllCoroutines();
+                }
             }
 
             yield return null;
@@ -76,10 +82,10 @@ public class GameManager : MonoBehaviour
         }while(randomX == 0);
 
         currentCollectable = Instantiate(collectables[Random.Range(0, collectables.Length)], new Vector3(randomX, -0.1f, 0f), Quaternion.identity).transform;
-        StartCoroutine(Animation());
+        StartCoroutine(CollectableAnimation());
     }
 
-    IEnumerator Animation(){
+    IEnumerator CollectableAnimation(){
         source.Play();
         Vector3 targetPosition = new Vector3(currentCollectable.position.x, 0.6f, 0f);
 
@@ -98,12 +104,8 @@ public class GameManager : MonoBehaviour
             ia.GetComponent<IA>().health -= player.GetComponent<Player>().damage;
 
             if(ia.GetComponent<IA>().health <= 0){
-                Destroy(ia.gameObject);
-                iaCount++;
-
-                if(iaCount < ias.Length){
-                    ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
-                }
+                ia.GetComponent<IA>().isDead = true;
+                StartCoroutine(DeathAnimation(ia));
             }
         }
 
@@ -118,8 +120,31 @@ public class GameManager : MonoBehaviour
             player.GetComponent<Player>().health -= ia.GetComponent<IA>().damage;
 
             if(player.GetComponent<Player>().health <= 0){
-                Destroy(player.gameObject);
+                player.GetComponent<Player>().isDead = true;
+                StartCoroutine(DeathAnimation(player));
             }
+        }
+    }
+
+    IEnumerator DeathAnimation(Transform temp){
+        Vector3 targetPosition = new Vector3(temp.position.x, -0.8f, temp.position.z);
+
+        while(temp && Vector3.Distance(temp.position, targetPosition) > 0.001f){
+            temp.position = Vector3.SmoothDamp(temp.position, targetPosition, ref velocity, 0.5f);
+            yield return null;
+        }
+
+        if(temp && temp.GetComponent<IA>()){
+            Destroy(ia.gameObject);
+            iaCount++;
+
+            if(iaCount < ias.Length){
+                ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
+            }
+        }
+
+        else if(temp && temp.GetComponent<Player>()){
+            Destroy(temp.gameObject);
         }
     }
 

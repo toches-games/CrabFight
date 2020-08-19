@@ -40,6 +40,9 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public bool shield;
 
+    [HideInInspector]
+    public bool isDead;
+
     void Awake(){
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -66,7 +69,7 @@ public class Player : MonoBehaviour
             }
 
             //Si la ia no ha muerto entonces que se le quede mirando de frente
-            if(GameManager.instance.ia){
+            if(GameManager.instance.ia && !GameManager.instance.ia.GetComponent<IA>().isDead){
                 transform.LookAt(GameManager.instance.ia.position);
             }
 

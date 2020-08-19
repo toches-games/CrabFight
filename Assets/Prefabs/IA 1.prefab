@@ -415,11 +415,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c165b24a36476e4e8e6aa72e979f458, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initHealth: 100
   health: 100
   damage: 10
   speed: 200
   probability: 0.4
   inputDirection: 0
+  shield: 0
+  isDead: 0
 --- !u!82 &2013041654
 AudioSource:
   m_ObjectHideFlags: 0

@@ -187,10 +187,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initHealth: 100
   health: 100
-  damage: 10
+  damage: 15
   speed: 200
   inputDirection: 0
   shield: 0
+  isDead: 0
 --- !u!95 &415989415
 Animator:
   serializedVersion: 3
@@ -1148,11 +1149,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 8263679207528231248, guid: c661530ec630d194f804d010f3e95d6e,
-        type: 3}
-      propertyPath: probability
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8263679207528231261, guid: c661530ec630d194f804d010f3e95d6e,
         type: 3}
       propertyPath: m_Name

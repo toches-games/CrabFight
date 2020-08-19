@@ -36,6 +36,9 @@ public class IA : MonoBehaviour
     [HideInInspector]
     public bool shield;
 
+    [HideInInspector]
+    public bool isDead;
+
     void Awake(){
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -83,7 +86,7 @@ public class IA : MonoBehaviour
     IEnumerator Move(){
         while(true){
             //Si el jugador no ha sido destruido
-            if(GameManager.instance.player){
+            if(GameManager.instance.player && !GameManager.instance.player.GetComponent<Player>().isDead){
                 //Hacemos que la ia lo mire de frente
                 transform.LookAt(GameManager.instance.player.position);
             }
