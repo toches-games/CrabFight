@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
                         //Destruye el collectable
                         Destroy(GameManager.instance.currentCollectable.gameObject);
 
-                        yield return new WaitForSeconds(1f);
+                        yield return new WaitForSeconds(0.1f);
                     }
                 }
 

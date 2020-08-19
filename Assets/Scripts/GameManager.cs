@@ -7,24 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    //Radio del circulo donde caminarán y donde se crearan los collectables
-    [Range(1, 5)]
-    public int radius = 1;
-
-    //Numero de lugares donde se podrán poner los collectables de manera aleatorea
-    [Range(10, 20)]
-    public int amountOfPoints = 10;
-
     //Los items que existirán en el juego
     public GameObject[] collectables;
-
-    //Index del lugar donde se puso el ultimo collectable (el que se ve en pantalla)
-    [HideInInspector]
-    public int lastItemIndex = 0;
-
-    //Index del lugar donde estaba el anterior collectable (ultimo que se recogió)
-    [HideInInspector]
-    public int beforeItemIndex = 0;
 
     //Referencia al player
     [HideInInspector]
@@ -40,6 +24,10 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public Transform currentCollectable;
 
+    public GameObject[] ias;
+
+    int iaCount = 0;
+
     void Awake(){
         if(!instance){
             instance = this;
@@ -52,12 +40,22 @@ public class GameManager : MonoBehaviour
 
     IEnumerator Start(){
         player = GameObject.Find("Player").transform;
-        ia = GameObject.Find("IA").transform;
+        ia = GameObject.Find("IA 1").transform;
 
         while(true){
-            if(!isPlaying && !currentCollectable){
-                yield return new WaitForSeconds(0.5f);
+            if(!isPlaying && !currentCollectable && player && ia){
+                yield return new WaitForSeconds(0.1f);
                 InstantiateCollectable();
+            }
+
+            if(!player){
+                Debug.Log("Gana ia");
+                StopAllCoroutines();
+            }
+
+            else if(!ia){
+                Debug.Log("Gana player");
+                StopAllCoroutines();
             }
 
             yield return null;
@@ -76,11 +74,25 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayerAttackToIA(){
+        ia.GetComponent<IA>().health -= player.GetComponent<Player>().damage;
+
+        if(ia.GetComponent<IA>().health <= 0){
+            Destroy(ia.gameObject);
+            iaCount++;
+
+            if(iaCount < ias.Length){
+                ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
+            }
+        }
 
     }
 
     public void IAAttackToPlayer(){
+        player.GetComponent<Player>().health -= ia.GetComponent<IA>().damage;
 
+        if(player.GetComponent<Player>().health <= 0){
+            Destroy(player.gameObject);
+        }
     }
 
 }
