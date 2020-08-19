@@ -149,7 +149,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 415989411}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 486264302}
@@ -186,6 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   damage: 10
+  speed: 200
+  inputDirection: 0
 --- !u!95 &415989415
 Animator:
   serializedVersion: 3
@@ -790,7 +792,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45.000004, y: 0, z: 0}
 --- !u!1 &970531389
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,15 +1059,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecbc64a0793d73149ac900750ca3086d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
   radius: 1
   amountOfPoints: 10
   collectables:
   - {fileID: 8298025565429705257, guid: 14fc3f0c0496174488e623ed047cb8db, type: 3}
-  angle: 0
-  direction: 0
   lastItemIndex: 0
   beforeItemIndex: 0
+  player: {fileID: 0}
+  ia: {fileID: 0}
+  isPlaying: 0
+  currentCollectable: {fileID: 0}
 --- !u!4 &1882932686
 Transform:
   m_ObjectHideFlags: 0
@@ -1186,8 +1189,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2013041653}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1906919582}
@@ -1196,7 +1199,7 @@ Transform:
   - {fileID: 1843969160}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!135 &2013041655
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1224,7 +1227,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   damage: 10
-  minIndex: 0
+  speed: 200
+  probability: 0.4
+  inputDirection: 0
 --- !u!95 &2013041657
 Animator:
   serializedVersion: 3
