@@ -28,6 +28,10 @@ public class GameManager : MonoBehaviour
 
     int iaCount = 0;
 
+    AudioSource source;
+
+    Vector3 velocity;
+
     void Awake(){
         if(!instance){
             instance = this;
@@ -39,6 +43,7 @@ public class GameManager : MonoBehaviour
     }
 
     IEnumerator Start(){
+        source = GetComponent<AudioSource>();
         player = GameObject.Find("Player").transform;
         ia = GameObject.Find("IA 1").transform;
 
@@ -70,7 +75,18 @@ public class GameManager : MonoBehaviour
             randomX = Random.Range(-1, 2);
         }while(randomX == 0);
 
-        currentCollectable = Instantiate(collectables[Random.Range(0, collectables.Length)], new Vector3(randomX, 0.6f, 0f), Quaternion.identity).transform;
+        currentCollectable = Instantiate(collectables[Random.Range(0, collectables.Length)], new Vector3(randomX, -0.1f, 0f), Quaternion.identity).transform;
+        StartCoroutine(Animation());
+    }
+
+    IEnumerator Animation(){
+        source.Play();
+        Vector3 targetPosition = new Vector3(currentCollectable.position.x, 0.6f, 0f);
+
+        while(Vector3.Distance(currentCollectable.position, targetPosition) > 0.001f){
+            currentCollectable.position = Vector3.SmoothDamp(currentCollectable.position, targetPosition, ref velocity, 0.1f);
+            yield return null;
+        }
     }
 
     public void PlayerAttackToIA(){

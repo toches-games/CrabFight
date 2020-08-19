@@ -52,7 +52,7 @@ public class IA : MonoBehaviour
             //Si la direccion actual del juego es 0 (no se están moviendo y por lo tanto el jugador
             //no ha presionado una tecla para jugar) y el player no ha sido destruido
             if(!GameManager.instance.isPlaying && GameManager.instance.currentCollectable){
-                yield return new WaitForSeconds(0.4f);
+                yield return new WaitForSeconds(0.45f);
 
                 //Juega con su posición actualizada, aqui es cuando empieza a buscar el lado mas corto
                 Play();
