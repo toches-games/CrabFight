@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
 
     void Awake(){
         rig = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        anim = transform.GetChild(0).GetComponent<Animator>();
         source = GetComponent<AudioSource>();
     }
 
@@ -119,6 +119,8 @@ public class Player : MonoBehaviour
                 }
 
                 transform.RotateAround(Vector3.zero, Vector3.up, -inputDirection * speed * initDistance * Time.deltaTime);
+
+                anim.SetBool("Walk", inputDirection != 0);
 
                 if(initDistance <= 0.001f && upCollectable){
                     upCollectable = false;
