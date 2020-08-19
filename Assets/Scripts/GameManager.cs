@@ -48,6 +48,9 @@ public class GameManager : MonoBehaviour
         ia = GameObject.Find("IA 1").transform;
 
         while(true){
+            //segundos para crear el primer item
+            yield return new WaitForSeconds(3f);
+
             //Si no se juega y no hay un collectable creado y existen player e ia
             //entonces crea un collectable
             if(!isPlaying && !currentCollectable && player && !player.GetComponent<Player>().isDead && ia && !ia.GetComponent<IA>().isDead){

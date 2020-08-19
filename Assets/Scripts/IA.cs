@@ -83,7 +83,18 @@ public class IA : MonoBehaviour
         }
     }
 
+    /*IEnumerator Up(){
+        Vector3 targetPosition = new Vector3(transform.position.x, 0.6f, transform.position.z);
+
+        while(Vector3.Distance(transform.position, targetPosition) > 0.001f){
+            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.5f);
+            yield return null;
+        }
+    }*/
+
     IEnumerator Move(){
+        //yield return StartCoroutine(Up());
+
         while(true){
             //Si el jugador no ha sido destruido
             if(GameManager.instance.player && !GameManager.instance.player.GetComponent<Player>().isDead){
