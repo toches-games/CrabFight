@@ -189,6 +189,7 @@ MonoBehaviour:
   damage: 10
   speed: 200
   inputDirection: 0
+  shield: 0
 --- !u!95 &415989415
 Animator:
   serializedVersion: 3
@@ -922,6 +923,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collectables:
   - {fileID: 8298025565429705257, guid: 14fc3f0c0496174488e623ed047cb8db, type: 3}
+  - {fileID: 8298025565429705257, guid: 9395882ae5e007941bace4c4c78c20ae, type: 3}
+  - {fileID: 8298025565429705257, guid: f348b59a1c1787345abeb06e0032c288, type: 3}
   player: {fileID: 0}
   ia: {fileID: 0}
   isPlaying: 0
@@ -1047,6 +1050,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8263679207528231248, guid: c661530ec630d194f804d010f3e95d6e,
+        type: 3}
+      propertyPath: probability
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8263679207528231261, guid: c661530ec630d194f804d010f3e95d6e,
         type: 3}
       propertyPath: m_Name

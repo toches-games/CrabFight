@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -2178787374222691642}
   - component: {fileID: 8235711203515845644}
   m_Layer: 0
-  m_Name: Attack
+  m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 705df38c773ff0148b372ca7581659f7, type: 2}
+  - {fileID: 2100000, guid: fc55ef6aeac40ed45be18b596e5302f6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   value: 0
-  type: 0
+  type: Shield
 --- !u!82 &8235711203515845644
 AudioSource:
   m_ObjectHideFlags: 0

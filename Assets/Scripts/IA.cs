@@ -6,8 +6,11 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class IA : MonoBehaviour
 {
+    public int initHealth = 100;
+
     //Vida que tendrá la ia
-    public int health = 100;
+    [HideInInspector]
+    public int health;
 
     //Daño que le hará al jugador
     public int damage = 5;
@@ -30,6 +33,9 @@ public class IA : MonoBehaviour
 
     AudioSource source;
 
+    [HideInInspector]
+    public bool shield;
+
     void Awake(){
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -38,6 +44,7 @@ public class IA : MonoBehaviour
 
     IEnumerator Start(){
         initPosition = transform.position;
+        health = initHealth;
 
         StartCoroutine(Move());
 

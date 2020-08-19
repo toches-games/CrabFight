@@ -74,24 +74,36 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayerAttackToIA(){
-        ia.GetComponent<IA>().health -= player.GetComponent<Player>().damage;
+        if(ia.GetComponent<IA>().shield){
+            ia.GetComponent<IA>().shield = false;
+        }
+        
+        else{
+            ia.GetComponent<IA>().health -= player.GetComponent<Player>().damage;
 
-        if(ia.GetComponent<IA>().health <= 0){
-            Destroy(ia.gameObject);
-            iaCount++;
+            if(ia.GetComponent<IA>().health <= 0){
+                Destroy(ia.gameObject);
+                iaCount++;
 
-            if(iaCount < ias.Length){
-                ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
+                if(iaCount < ias.Length){
+                    ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
+                }
             }
         }
 
     }
 
     public void IAAttackToPlayer(){
-        player.GetComponent<Player>().health -= ia.GetComponent<IA>().damage;
+        if(player.GetComponent<Player>().shield){
+            player.GetComponent<Player>().shield = false;
+        }
 
-        if(player.GetComponent<Player>().health <= 0){
-            Destroy(player.gameObject);
+        else{
+            player.GetComponent<Player>().health -= ia.GetComponent<IA>().damage;
+
+            if(player.GetComponent<Player>().health <= 0){
+                Destroy(player.gameObject);
+            }
         }
     }
 
