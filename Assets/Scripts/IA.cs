@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))]
 public class IA : MonoBehaviour
 {
     //Vida que tendrá la ia
@@ -28,9 +28,12 @@ public class IA : MonoBehaviour
 
     Vector3 initPosition;
 
+    AudioSource source;
+
     void Awake(){
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        source = GetComponent<AudioSource>();
     }
 
     IEnumerator Start(){
@@ -135,6 +138,8 @@ public class IA : MonoBehaviour
         anim.SetTrigger("Attack");
 
         GameManager.instance.IAAttackToPlayer();
+
+        source.Play();
     }
 
     //Si agarra un collectable

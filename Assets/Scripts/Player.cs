@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour
 {
     //Vida que tendrá el jugador
@@ -32,9 +32,12 @@ public class Player : MonoBehaviour
 
     Vector3 initPosition;
 
+    AudioSource source;
+
     void Awake(){
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        source = GetComponent<AudioSource>();
     }
 
     void Start(){
@@ -134,6 +137,8 @@ public class Player : MonoBehaviour
         anim.SetTrigger("Attack");
 
         GameManager.instance.PlayerAttackToIA();
+
+        source.Play();
     }
 
     //Si el jugador choca con un collectable
