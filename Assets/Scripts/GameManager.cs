@@ -138,8 +138,8 @@ public class GameManager : MonoBehaviour
     }
 
     public IEnumerator SliderAnimation(float init, float target, string quien){
-        while(Mathf.Abs(target - init) > 0.001f){
-            init = Mathf.SmoothDamp(init, target, ref velocityF, 0.2f);
+        while(Mathf.Abs(target - init) > 0.01f){
+            init = Mathf.SmoothDamp(init, target, ref velocityF, 0.05f);
 
             if(quien == "ia"){
                 iaSlider.value = init;

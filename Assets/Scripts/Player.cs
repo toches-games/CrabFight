@@ -99,7 +99,7 @@ public class Player : MonoBehaviour
                         GameManager.instance.currentCollectable.position.z
                     ), transform.position);
 
-                    if(initDistance <= 0.01f){
+                    if(initDistance <= 0.1f){
                         inputDirection = -inputDirection;
                         upCollectable = true;
                         fail = false;
@@ -109,7 +109,7 @@ public class Player : MonoBehaviour
                 else if(!upCollectable && GameManager.instance.currentCollectable){
                     initDistance = Vector3.Distance(GameManager.instance.currentCollectable.position, transform.position);
                     
-                    if(initDistance <= 0.01f){
+                    if(initDistance <= 0.1f){
                         inputDirection = -inputDirection;
                         upCollectable = true;
                         //Ataca al jugador

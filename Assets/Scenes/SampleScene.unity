@@ -793,7 +793,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initHealth: 100
   health: 100
-  damage: 10
+  damage: 20
   speed: 200
   inputDirection: 0
   shield: 0
@@ -4967,6 +4967,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: IA 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7817093592040839958, guid: c661530ec630d194f804d010f3e95d6e,
+        type: 3}
+      propertyPath: damage
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}

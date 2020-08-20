@@ -315,9 +315,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c165b24a36476e4e8e6aa72e979f458, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initHealth: 125
+  initHealth: 110
   health: 100
-  damage: 20
+  damage: 25
   speed: 200
   probability: 0.6
   inputDirection: 0
