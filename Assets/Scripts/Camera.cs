@@ -10,7 +10,7 @@ public class Camera : MonoBehaviour
 
         while(true){
             if(GameManager.instance.PVP || GameManager.instance.PVCOM){
-                while(Vector3.Distance(transform.position, targetPosition) > 0.001f){
+                while(Vector3.Distance(transform.position, targetPosition) > 0.01f){
                     GetComponent<Animator>().SetBool("Move", true);
                     transform.RotateAround(Vector3.zero, Vector3.up, 100 * Vector3.Distance(transform.position, targetPosition) * Time.deltaTime);
                     yield return null;
