@@ -160,9 +160,9 @@ public class Player : MonoBehaviour
             GameManager.instance.currentCollectable.GetComponent<SphereCollider>().enabled = false;
 
             //GetComponent<ParticleSystem>().startColor = 
-            if (GetComponent<ParticleSystem>()){
+            /*if (GetComponent<ParticleSystem>()){
                 GetComponent<ParticleSystem>().Play();
-            }
+            }*/
 
         }
     }

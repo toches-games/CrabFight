@@ -109,6 +109,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   value: 10
   type: Health
+  particles: {fileID: 8970761754306621760, guid: 248ddec504cf8e343a6e84b5acaba665,
+    type: 3}
 --- !u!82 &8235711203515845644
 AudioSource:
   m_ObjectHideFlags: 0

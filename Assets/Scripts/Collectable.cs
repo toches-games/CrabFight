@@ -9,6 +9,8 @@ public class Collectable : MonoBehaviour
     public int value = 10;
     public string type;
 
+    public GameObject particles;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -16,6 +18,9 @@ public class Collectable : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other){
+        GameObject temp = Instantiate(particles, transform.position, transform.rotation);
+        Destroy(temp, 1f);
+
         if(other.name == "Player"){
             if(type == "Health"){
                 StartCoroutine(GameManager.instance.SliderAnimation(
