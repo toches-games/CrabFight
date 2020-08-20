@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -32,6 +33,17 @@ public class GameManager : MonoBehaviour
 
     Vector3 velocity;
 
+    [HideInInspector]
+    public bool PVCOM;
+
+    [HideInInspector]
+    public bool PVP;
+
+    public Slider playerSlider;
+    public Slider iaSlider;
+
+    float velocityF;
+
     void Awake(){
         if(!instance){
             instance = this;
@@ -44,8 +56,23 @@ public class GameManager : MonoBehaviour
 
     IEnumerator Start(){
         source = GetComponent<AudioSource>();
+        
         player = GameObject.Find("Player").transform;
-        ia = GameObject.Find("IA 1").transform;
+
+        while(!PVCOM && !PVP){
+            yield return null;
+        }
+
+        if(PVCOM){
+            ia = GameObject.Find("IA 1").transform;
+        }
+
+        else{
+            GameObject.Find("IA 1").name = "Player 2";
+            ia = GameObject.Find("Player 2").transform;
+        }
+
+        InitUI();
 
         while(true){
             //segundos para crear el primer item
@@ -90,10 +117,33 @@ public class GameManager : MonoBehaviour
 
     IEnumerator CollectableAnimation(){
         source.Play();
-        Vector3 targetPosition = new Vector3(currentCollectable.position.x, 0.6f, 0f);
+        Vector3 targetPosition = new Vector3(currentCollectable.position.x, 0.8f, 0f);
 
         while(Vector3.Distance(currentCollectable.position, targetPosition) > 0.001f){
             currentCollectable.position = Vector3.SmoothDamp(currentCollectable.position, targetPosition, ref velocity, 0.1f);
+            yield return null;
+        }
+
+        targetPosition = new Vector3(currentCollectable.position.x, 0.6f, 0f);
+
+        while(Vector3.Distance(currentCollectable.position, targetPosition) > 0.001f){
+            currentCollectable.position = Vector3.SmoothDamp(currentCollectable.position, targetPosition, ref velocity, Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    public IEnumerator SliderAnimation(float init, float target, string quien){
+        while(Mathf.Abs(target - init) > 0.001f){
+            init = Mathf.SmoothDamp(init, target, ref velocityF, 0.2f);
+
+            if(quien == "ia"){
+                iaSlider.value = init;
+            }
+
+            else{
+                playerSlider.value = init;
+            }
+
             yield return null;
         }
     }
@@ -104,6 +154,7 @@ public class GameManager : MonoBehaviour
         }
         
         else{
+            StartCoroutine(SliderAnimation(ia.GetComponent<IA>().health, ia.GetComponent<IA>().health - player.GetComponent<Player>().damage, "ia"));
             ia.GetComponent<IA>().health -= player.GetComponent<Player>().damage;
 
             if(ia.GetComponent<IA>().health <= 0){
@@ -120,6 +171,7 @@ public class GameManager : MonoBehaviour
         }
 
         else{
+            StartCoroutine(SliderAnimation(player.GetComponent<Player>().health, player.GetComponent<Player>().health - ia.GetComponent<IA>().damage, "player"));
             player.GetComponent<Player>().health -= ia.GetComponent<IA>().damage;
 
             if(player.GetComponent<Player>().health <= 0){
@@ -132,6 +184,10 @@ public class GameManager : MonoBehaviour
     IEnumerator DeathAnimation(Transform temp){
         Vector3 targetPosition = new Vector3(temp.position.x, -0.8f, temp.position.z);
 
+        if(temp && temp.GetComponent<IA>()){
+            iaCount++;
+        }
+
         while(temp && Vector3.Distance(temp.position, targetPosition) > 0.001f){
             temp.position = Vector3.SmoothDamp(temp.position, targetPosition, ref velocity, 0.5f);
             yield return null;
@@ -139,11 +195,11 @@ public class GameManager : MonoBehaviour
 
         if(temp && temp.GetComponent<IA>()){
             Destroy(ia.gameObject);
-            iaCount++;
-
-            if(iaCount < ias.Length){
-                ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
-            }
+        }
+        
+        if(iaCount < ias.Length && player && !player.GetComponent<Player>().isDead){
+            ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
+            InitUI();
         }
 
         else if(temp && temp.GetComponent<Player>()){
@@ -151,4 +207,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void InitPVP(){
+        PVP = true;
+    }
+
+    public void InitPVCOM(){
+        PVCOM = true;
+    }
+
+    void InitUI(){
+        iaSlider.maxValue = ia.GetComponent<IA>().initHealth;
+        iaSlider.value = ia.GetComponent<IA>().initHealth;
+
+        Image iaSliderColor = iaSlider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+        iaSliderColor.color = ia.GetChild(0).GetChild(1).GetComponent<Renderer>().materials[0].color;
+        
+        if(iaCount == 0){
+            playerSlider.maxValue = player.GetComponent<Player>().initHealth;
+            playerSlider.value = player.GetComponent<Player>().initHealth;
+
+            Image playerSliderColor = playerSlider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+            playerSliderColor.color = player.GetChild(0).GetChild(1).GetComponent<Renderer>().materials[0].color;
+        }
+    }
 }

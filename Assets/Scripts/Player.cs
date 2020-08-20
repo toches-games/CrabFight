@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
                         Attack();
                         
                         //Destruye el collectable
-                        Destroy(GameManager.instance.currentCollectable.gameObject);
+                        Destroy(GameManager.instance.currentCollectable.gameObject, 1f);
 
                         yield return new WaitForSeconds(0.1f);
                     }
@@ -155,8 +155,9 @@ public class Player : MonoBehaviour
 
     //Si el jugador choca con un collectable
     void OnTriggerEnter(Collider other){
-        if(other.name != "IA"){
+        if(other.name != "IA" && GameManager.instance.currentCollectable){
             GameManager.instance.currentCollectable.GetComponent<Renderer>().enabled = false;
+            GameManager.instance.currentCollectable.GetComponent<SphereCollider>().enabled = false;
         }
     }
 }

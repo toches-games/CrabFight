@@ -83,15 +83,6 @@ public class IA : MonoBehaviour
         }
     }
 
-    /*IEnumerator Up(){
-        Vector3 targetPosition = new Vector3(transform.position.x, 0.6f, transform.position.z);
-
-        while(Vector3.Distance(transform.position, targetPosition) > 0.001f){
-            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.5f);
-            yield return null;
-        }
-    }*/
-
     IEnumerator Move(){
         //yield return StartCoroutine(Up());
 
@@ -130,7 +121,7 @@ public class IA : MonoBehaviour
                         Attack();
                         
                         //Destruye el collectable
-                        Destroy(GameManager.instance.currentCollectable.gameObject);
+                        Destroy(GameManager.instance.currentCollectable.gameObject, 1f);
 
                         yield return new WaitForSeconds(0.1f);
                     }
@@ -167,8 +158,9 @@ public class IA : MonoBehaviour
 
     //Si agarra un collectable
     void OnTriggerEnter(Collider other){
-        if(other.name != "Player"){
+        if(other.name != "Player" && GameManager.instance.currentCollectable){
             GameManager.instance.currentCollectable.GetComponent<Renderer>().enabled = false;
+            GameManager.instance.currentCollectable.GetComponent<SphereCollider>().enabled = false;
         }
     }
 }

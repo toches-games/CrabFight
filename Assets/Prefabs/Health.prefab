@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d5b4b7f45e11c4b81153c90fe6c2b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 5
+  value: 10
   type: Health
 --- !u!82 &8235711203515845644
 AudioSource:

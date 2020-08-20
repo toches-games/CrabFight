@@ -1018,7 +1018,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initHealth: 250
   health: 100
-  damage: 20
+  damage: 25
   speed: 200
   probability: 0.8
   inputDirection: 0

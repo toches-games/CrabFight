@@ -15,15 +15,15 @@ public class Collectable : MonoBehaviour
         source = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void OnTriggerEnter(Collider other){
         if(other.name == "Player"){
             if(type == "Health"){
+                StartCoroutine(GameManager.instance.SliderAnimation(
+                    other.gameObject.GetComponent<Player>().health,
+                    other.gameObject.GetComponent<Player>().health + value,
+                    "player"
+                ));
+
                 other.gameObject.GetComponent<Player>().health += value;
                 if(other.gameObject.GetComponent<Player>().health > other.gameObject.GetComponent<Player>().initHealth){
                     other.gameObject.GetComponent<Player>().health = other.gameObject.GetComponent<Player>().initHealth;
@@ -37,6 +37,12 @@ public class Collectable : MonoBehaviour
 
         else{
             if(type == "Health"){
+                StartCoroutine(GameManager.instance.SliderAnimation(
+                    other.gameObject.GetComponent<IA>().health,
+                    other.gameObject.GetComponent<IA>().health + value,
+                    "ia"
+                ));
+
                 other.gameObject.GetComponent<IA>().health += value;
                 if(other.gameObject.GetComponent<IA>().health > other.gameObject.GetComponent<IA>().initHealth){
                     other.gameObject.GetComponent<IA>().health = other.gameObject.GetComponent<IA>().initHealth;
