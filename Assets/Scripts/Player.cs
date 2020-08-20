@@ -106,6 +106,8 @@ public class Player : MonoBehaviour
                         upCollectable = true;
                         //Ataca al jugador
                         Attack();
+
+                        GameObject.Find("Main Camera").GetComponent<Animator>().SetTrigger("Move");
                         
                         //Destruye el collectable
                         Destroy(GameManager.instance.currentCollectable.gameObject, 1f);
