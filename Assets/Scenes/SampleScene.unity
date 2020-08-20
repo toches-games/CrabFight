@@ -1236,7 +1236,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Boxer Crap
+  m_text: Boxer Crab
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 95e21ed97f7730a45a5e92f5d50c2377, type: 2}
   m_sharedMaterial: {fileID: 5507214724670024213, guid: 95e21ed97f7730a45a5e92f5d50c2377,
