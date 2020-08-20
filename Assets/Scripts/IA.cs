@@ -52,6 +52,13 @@ public class IA : MonoBehaviour
         StartCoroutine(Move());
 
         while(true){
+            if(shield){
+                transform.GetChild(1).gameObject.SetActive(true);
+            }
+
+            else{
+                transform.GetChild(1).gameObject.SetActive(false);
+            }
             //Si la direccion actual del juego es 0 (no se están moviendo y por lo tanto el jugador
             //no ha presionado una tecla para jugar) y el player no ha sido destruido
             if(!GameManager.instance.isPlaying && GameManager.instance.currentCollectable){

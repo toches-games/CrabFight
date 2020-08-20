@@ -58,6 +58,14 @@ public class Player : MonoBehaviour
 
     IEnumerator Move(){
         while(true){
+            if(shield){
+                transform.GetChild(1).gameObject.SetActive(true);
+            }
+
+            else{
+                transform.GetChild(1).gameObject.SetActive(false);
+            }
+
             //Si no se ha presionado la tecla, no se está jugando y presiona una tecla
             if(!keyDown && !GameManager.instance.isPlaying && Input.GetAxisRaw("Horizontal") != 0 && GameManager.instance.currentCollectable){
                 //Y hacemos keyDown a true para que deje de comprobar por si se mantiene
