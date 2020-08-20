@@ -158,6 +158,12 @@ public class Player : MonoBehaviour
         if(other.name != "IA" && GameManager.instance.currentCollectable){
             GameManager.instance.currentCollectable.GetComponent<Renderer>().enabled = false;
             GameManager.instance.currentCollectable.GetComponent<SphereCollider>().enabled = false;
+
+            //GetComponent<ParticleSystem>().startColor = 
+            if (GetComponent<ParticleSystem>()){
+                GetComponent<ParticleSystem>().Play();
+            }
+
         }
     }
 }

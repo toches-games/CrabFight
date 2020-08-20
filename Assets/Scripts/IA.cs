@@ -161,6 +161,10 @@ public class IA : MonoBehaviour
         if(other.name != "Player" && GameManager.instance.currentCollectable){
             GameManager.instance.currentCollectable.GetComponent<Renderer>().enabled = false;
             GameManager.instance.currentCollectable.GetComponent<SphereCollider>().enabled = false;
+            if (GetComponent<ParticleSystem>())
+            {
+                GetComponent<ParticleSystem>().Play();
+            }
         }
     }
 }

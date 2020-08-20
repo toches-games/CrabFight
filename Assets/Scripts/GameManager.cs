@@ -44,6 +44,11 @@ public class GameManager : MonoBehaviour
 
     float velocityF;
 
+    //Colores de los collectables
+    public Color colorLife;
+    public Color colorDeffense;
+    public Color colorAttack;
+
     void Awake(){
         if(!instance){
             instance = this;
@@ -58,7 +63,7 @@ public class GameManager : MonoBehaviour
         source = GetComponent<AudioSource>();
         
         player = GameObject.Find("Player").transform;
-
+        
         while(!PVCOM && !PVP){
             yield return null;
         }
@@ -229,5 +234,10 @@ public class GameManager : MonoBehaviour
             Image playerSliderColor = playerSlider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
             playerSliderColor.color = player.GetChild(0).GetChild(1).GetComponent<Renderer>().materials[0].color;
         }
+    }
+
+    public void ResetGame()
+    {
+        SceneManager.LoadSceneAsync(0);
     }
 }
