@@ -2,48 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    //Velocidad con la que se movera tanto el jugador como la ia
-    //tienen la misma velocidad porque siempre estarán de frente
-    [Range(1, 5)]
-    public float speed = 1f;
-
-    //Radio del circulo donde caminarán y donde se crearan los collectables
-    [Range(1, 5)]
-    public int radius = 1;
-
-    //Numero de lugares donde se podrán poner los collectables de manera aleatorea
-    [Range(10, 20)]
-    public int amountOfPoints = 10;
-
     //Los items que existirán en el juego
     public GameObject[] collectables;
 
-    //Angulo del juego, es el encargado de realizar el movimiento del jugador y la ia
-    [HideInInspector]
-    public float angle = 0f;
-
-    //Direccion en la que se gira el movimiento del juego
-    [HideInInspector]
-    public float direction = 0f;
-
-    //Index del lugar donde se puso el ultimo collectable (el que se ve en pantalla)
-    [HideInInspector]
-    public int lastItemIndex = 0;
-
-    //Index del lugar donde estaba el anterior collectable (ultimo que se recogió)
-    [HideInInspector]
-    public int beforeItemIndex = 0;
-
     //Referencia al player
-    Transform player;
+    [HideInInspector]
+    public Transform player;
 
     //Referencia a la ia
-    Transform ia;
+    [HideInInspector]
+    public Transform ia;
+
+    [HideInInspector]
+    public bool isPlaying;
+
+    [HideInInspector]
+    public Transform currentCollectable;
+
+    public GameObject[] ias;
+
+    int iaCount = 0;
+
+    AudioSource source;
+
+    Vector3 velocity;
+
+    [HideInInspector]
+    public bool PVCOM;
+
+    [HideInInspector]
+    public bool PVP;
+
+    public Slider playerSlider;
+    public Slider iaSlider;
+
+    float velocityF;
+
+    //Colores de los collectables
+    public Color colorLife;
+    public Color colorDeffense;
+    public Color colorAttack;
 
     void Awake(){
         if(!instance){
@@ -55,62 +59,185 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Start(){
+    IEnumerator Start(){
+        source = GetComponent<AudioSource>();
+        
         player = GameObject.Find("Player").transform;
-        ia = GameObject.Find("IA").transform;
-
-        //Se halla los grados a los que estarán separados los lugares donde se colcoarán los collectables
-        //dependiendo de la cantidad que se quieran
-        float degrees = 360 / amountOfPoints;
-
-        for(int i=0; i<amountOfPoints; i++){
-            //Se halla la posición del lugar
-            Vector3 pos = new Vector3(Mathf.Cos(i * degrees * Mathf.Deg2Rad), 0.5f, Mathf.Sin(i * degrees * Mathf.Deg2Rad)) * radius;
-
-            //Se muestra las posiciones de los lugares para verlos mejor
-            Debug.DrawRay(transform.position, (pos - transform.position).normalized * (pos - transform.position).magnitude, Color.yellow, Mathf.Infinity);
-
-            //Se crea un objeto vació
-            Transform temp = new GameObject().transform;
-
-            //Con la posición hallada antes
-            temp.position = pos;
-
-            //Y lo hacemos hijo del GameManager
-            temp.SetParent(transform);
+        
+        while(!PVCOM && !PVP){
+            yield return null;
         }
 
-        //Se crea el primer collectable del mapa al inicio
-        InstantiateCollectable();
-    }
-
-    void Update(){
-        //Va actualizando el angulo del mapa poco a poco para ir moviendo al jugador y la ia
-        angle += direction * speed * Time.deltaTime;
-
-        if(Input.GetKeyDown(KeyCode.Escape)){
-            Application.Quit();
+        if(PVCOM){
+            ia = GameObject.Find("IA 1").transform;
         }
 
-        if(Input.GetKeyDown(KeyCode.Space)){
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        else{
+            GameObject.Find("IA 1").name = "Player 2";
+            ia = GameObject.Find("Player 2").transform;
+        }
+
+        InitUI();
+
+        while(true){
+            //segundos para crear el primer item
+            yield return new WaitForSeconds(3f);
+
+            //Si no se juega y no hay un collectable creado y existen player e ia
+            //entonces crea un collectable
+            if(!isPlaying && !currentCollectable && player && !player.GetComponent<Player>().isDead && ia && !ia.GetComponent<IA>().isDead){
+                yield return new WaitForSeconds(0.1f);
+                InstantiateCollectable();
+            }
+
+            //gana ia
+            if(!player){
+                Debug.Log("Gana ia");
+                StopAllCoroutines();
+            }
+
+            //gana jugador
+            else if(ia && ia.GetComponent<IA>().isDead){
+                if(iaCount >= ias.Length){
+                    Debug.Log("Gana player");
+                    StopAllCoroutines();
+                }
+            }
+
+            yield return null;
         }
     }
 
     //Crea un nuevo collectable en el mapa
     public void InstantiateCollectable(){
-        //Antes de crear uno nuevo se guarda el index del actual
-        beforeItemIndex = lastItemIndex;
+        int randomX = 0;
 
         do{
-            //Se elige un nuevo lugar aleatoreo donde poner el collectable
-            lastItemIndex = Random.Range(0, transform.childCount);
+            randomX = Random.Range(-1, 2);
+        }while(randomX == 0);
 
-            //Mientras que la distancia de este lugar no esté tan cerca de la posición del jugador ni de la ia
-            //Ya que se podría justo en es posición y no se veria cuando los agarra
-        }while(Vector3.Distance(transform.GetChild(lastItemIndex).position, player.position) < 1f || (Vector3.Distance(transform.GetChild(lastItemIndex).position, ia.position) < 1f));
+        currentCollectable = Instantiate(collectables[Random.Range(0, collectables.Length)], new Vector3(randomX, -0.1f, 0f), Quaternion.identity).transform;
+        StartCoroutine(CollectableAnimation());
+    }
 
-        //Finalmente se crea el collectable aleatoreo en la mapa 
-        Instantiate(collectables[Random.Range(0, collectables.Length)], transform.GetChild(lastItemIndex).position, Quaternion.identity);
+    IEnumerator CollectableAnimation(){
+        source.Play();
+        Vector3 targetPosition = new Vector3(currentCollectable.position.x, 0.8f, 0f);
+
+        while(Vector3.Distance(currentCollectable.position, targetPosition) > 0.001f){
+            currentCollectable.position = Vector3.SmoothDamp(currentCollectable.position, targetPosition, ref velocity, 0.1f);
+            yield return null;
+        }
+
+        targetPosition = new Vector3(currentCollectable.position.x, 0.6f, 0f);
+
+        while(Vector3.Distance(currentCollectable.position, targetPosition) > 0.001f){
+            currentCollectable.position = Vector3.SmoothDamp(currentCollectable.position, targetPosition, ref velocity, Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    public IEnumerator SliderAnimation(float init, float target, string quien){
+        while(Mathf.Abs(target - init) > 0.01f){
+            init = Mathf.SmoothDamp(init, target, ref velocityF, 0.05f);
+
+            if(quien == "ia"){
+                iaSlider.value = init;
+            }
+
+            else{
+                playerSlider.value = init;
+            }
+
+            yield return null;
+        }
+    }
+
+    public void PlayerAttackToIA(){
+        if(ia.GetComponent<IA>().shield){
+            ia.GetComponent<IA>().shield = false;
+        }
+        
+        else{
+            StartCoroutine(SliderAnimation(ia.GetComponent<IA>().health, ia.GetComponent<IA>().health - player.GetComponent<Player>().damage, "ia"));
+            ia.GetComponent<IA>().health -= player.GetComponent<Player>().damage;
+
+            if(ia.GetComponent<IA>().health <= 0){
+                ia.GetComponent<IA>().isDead = true;
+                StartCoroutine(DeathAnimation(ia));
+            }
+        }
+
+    }
+
+    public void IAAttackToPlayer(){
+        if(player.GetComponent<Player>().shield){
+            player.GetComponent<Player>().shield = false;
+        }
+
+        else{
+            StartCoroutine(SliderAnimation(player.GetComponent<Player>().health, player.GetComponent<Player>().health - ia.GetComponent<IA>().damage, "player"));
+            player.GetComponent<Player>().health -= ia.GetComponent<IA>().damage;
+
+            if(player.GetComponent<Player>().health <= 0){
+                player.GetComponent<Player>().isDead = true;
+                StartCoroutine(DeathAnimation(player));
+            }
+        }
+    }
+
+    IEnumerator DeathAnimation(Transform temp){
+        Vector3 targetPosition = new Vector3(temp.position.x, -0.8f, temp.position.z);
+
+        if(temp && temp.GetComponent<IA>()){
+            iaCount++;
+        }
+
+        while(temp && Vector3.Distance(temp.position, targetPosition) > 0.001f){
+            temp.position = Vector3.SmoothDamp(temp.position, targetPosition, ref velocity, 0.5f);
+            yield return null;
+        }
+
+        if(temp && temp.GetComponent<IA>()){
+            Destroy(ia.gameObject);
+        }
+        
+        if(iaCount < ias.Length && player && !player.GetComponent<Player>().isDead){
+            ia = Instantiate(ias[iaCount], new Vector3(0, 0.6f, 1), Quaternion.Euler(0, 180, 0)).transform;
+            InitUI();
+        }
+
+        else if(temp && temp.GetComponent<Player>()){
+            Destroy(temp.gameObject);
+        }
+    }
+
+    public void InitPVP(){
+        PVP = true;
+    }
+
+    public void InitPVCOM(){
+        PVCOM = true;
+    }
+
+    void InitUI(){
+        iaSlider.maxValue = ia.GetComponent<IA>().initHealth;
+        iaSlider.value = ia.GetComponent<IA>().initHealth;
+
+        Image iaSliderColor = iaSlider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+        iaSliderColor.color = ia.GetChild(0).GetChild(1).GetComponent<Renderer>().materials[0].color;
+        
+        if(iaCount == 0){
+            playerSlider.maxValue = player.GetComponent<Player>().initHealth;
+            playerSlider.value = player.GetComponent<Player>().initHealth;
+
+            Image playerSliderColor = playerSlider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+            playerSliderColor.color = player.GetChild(0).GetChild(1).GetComponent<Renderer>().materials[0].color;
+        }
+    }
+
+    public void ResetGame()
+    {
+        SceneManager.LoadSceneAsync(0);
     }
 }
